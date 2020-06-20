@@ -1,0 +1,5 @@
+*test*
+.venv/
+.vscode/
+__pycache__/
+*sandbox*
