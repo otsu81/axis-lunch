@@ -50,9 +50,9 @@ class HTMLGenerator():
 
         restaurant_rows = self.make_restaurant_rows(self.menus)
 
-        index = index.format(
+        index_html = index.format(
             RESTAURANT_MENU_ROWS=restaurant_rows)
 
-        with open(self.output_path, 'w') as f:
-            f.write(index)
-        log.info(f"Wrote file: {self.output_path}")
+        log.warn(f"Generated HTML index: \n{index_html}")
+
+        return index_html
