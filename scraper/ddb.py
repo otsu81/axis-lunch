@@ -21,7 +21,8 @@ class RestaurantTable():
 
     def update_restaurant_menu(self, restaurant_name, menu):
         global to_seconds
-        ts = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        ts = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d')
+        # ts = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
         update_expression = 'SET #MON = :mon, #TUE = :tue, #WED = :wed, ' \
                             + '#THU = :thu, #FRI = :fri, #TTL = :ttl'
@@ -53,7 +54,7 @@ class RestaurantTable():
                     'S': menu['fri']
                 },
                 ':ttl': {
-                    'N': str(int(time.time()) + to_seconds['HOUR'])
+                    'N': str(int(time.time()) + to_seconds['DAY'])
                 }
             },
             Key={
@@ -65,4 +66,10 @@ class RestaurantTable():
                 },
             },
             UpdateExpression=update_expression
+        )
+
+    def get_restaurant_menus(self):
+        return self.client.scan(
+            TableName=self.table_name,
+            IndexName='restaurant-index'
         )
