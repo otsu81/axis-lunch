@@ -1,7 +1,11 @@
 import requests
+import logging
+import os
 from bs4 import BeautifulSoup
 from restaurants.abstract_restaurant import AbstractRestaurant
 
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+log = logging.getLogger('pieplow_parser')
 
 class Pieplow(AbstractRestaurant):
 
@@ -24,7 +28,7 @@ class Pieplow(AbstractRestaurant):
                 for child in tag.children:
                     menu_list.append(child.string.rstrip())
 
-            print(menu_list)
+            log.info(type(self), menu_list)
 
             menu = dict()
             menu['mon'] = self.menu_for_weekday(

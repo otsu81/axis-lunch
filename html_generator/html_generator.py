@@ -1,7 +1,8 @@
 import os.path
 import logging
 
-log = logging.getLogger()
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+log = logging.getLogger('html_generator')
 
 
 class HTMLGenerator():
@@ -41,6 +42,7 @@ class HTMLGenerator():
             restaurant_html_rows += menu_template.format(
                 restaurant=restaurant, **week_menus[restaurant])
 
+        log.debug(restaurant_html_rows)
         return restaurant_html_rows
 
     def make_html(self):
@@ -53,6 +55,6 @@ class HTMLGenerator():
         index_html = index.format(
             RESTAURANT_MENU_ROWS=restaurant_rows)
 
-        log.warn(f"Generated HTML index: \n{index_html}")
+        log.info(f"Generated HTML index: \n{index_html}")
 
         return index_html

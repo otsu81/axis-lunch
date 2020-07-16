@@ -1,6 +1,3 @@
-# import requests
-# import urllib.request
-# import time
 import os
 import json
 import logging
@@ -10,8 +7,8 @@ from restaurants.pieplow import Pieplow
 from ddb import RestaurantTable
 
 load_dotenv()
-log = logging.getLogger()
-
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+log = logging.getLogger('scraper')
 
 paolos_menu = Paolos().get_week_menu(os.environ['PAOLOS'])
 pieplow_menu = Pieplow().get_week_menu(os.environ['PIEPLOW'])

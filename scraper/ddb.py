@@ -1,6 +1,8 @@
 import boto3
 import os
 import time
+import logging
+import json
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -11,7 +13,8 @@ to_seconds = {
     'DAY': 86400,
     'WEEK': 604800
 }
-
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+log = logging.getLogger('ddb_table')
 
 class RestaurantTable():
 
@@ -26,7 +29,7 @@ class RestaurantTable():
         update_expression = 'SET #MON = :mon, #TUE = :tue, #WED = :wed, ' \
                             + '#THU = :thu, #FRI = :fri, #TTL = :ttl'
 
-        self.client.update_item(
+        response = self.client.update_item(
             TableName=self.table_name,
             ExpressionAttributeNames={
                 '#MON': 'mon',
@@ -66,3 +69,4 @@ class RestaurantTable():
             },
             UpdateExpression=update_expression
         )
+        log.info(json.dumps(response, indent=4, default=str))

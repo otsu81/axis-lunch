@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  axis-lunch
+
+# CFN parameters:
+Parameters:
+  HTMLBucketName:
+    Type: String
+    Default: bucket
+    Description: Name of the S3 bucket for hosting the static website
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 60
+
+Resources:
+  FunctionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AxisLunchScraperLambdaRole
+      Description: The IAM role allowing the Axis Lunch scraper to function
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+
+  HTMLS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      Description: The S3 bucket for the static website
+      BucketName: !Ref HTMLBucketName
+
+  HTMLGeneratorFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: html_generator/
+      Handler: main.handler
+      Runtime: python3.8
+      Role: !GetAtt FunctionsRole.Arn
+      Environment:
+        Variables:
+          S3_BUCKET: !GetAtt HTMLS3Bucket.Arn
+
+  ScraperFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: scraper/
+      Handler: main.handler
+      Runtime: python3.8
+      Role: !GetAtt FunctionsRole.Arn
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  FunctionsRole:
+    Description: Role created for Axis Lunch scraper
+    Value: !GetAtt FunctionsRole.Arn

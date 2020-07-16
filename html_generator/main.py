@@ -1,12 +1,13 @@
 import boto3
 import logging
+import json
 import os
 from dotenv import load_dotenv
 from html_generator import HTMLGenerator
 
 load_dotenv()
-log = logging.getLogger()
-log.setLevel(level=logging.INFO)
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+log = logging.getLogger('html_generator')
 
 
 def get_restaurant_menu_dict():
@@ -29,20 +30,22 @@ def get_restaurant_menu_dict():
 
 def copy_html_to_s3(file_contents, object_key):
     s3 = boto3.client('s3')
-    s3.put_object(
+    result = s3.put_object(
         Body=file_contents,
         Bucket=os.environ['S3_BUCKET'],
         Key=object_key,
         ContentType='text/html'
     )
+    log.info(json.dumps(result, indent=4, default=str))
 
 
-def main(event, context):
+def main():
     menus = get_restaurant_menu_dict()
 
     for r in menus:
         for d in menus[r]:
             menus[r][d] = menus[r][d].replace('\n', '</p><p>')
+            log.debug(menus[r][d])
 
     index_html = HTMLGenerator(
         menus,
@@ -55,4 +58,9 @@ def main(event, context):
 
 
 if __name__ == '__main__':
-    main(None, None)
+    main()
+
+
+def handler(event, context):
+    log.info(json.dumps(event, indent=4, default=str))
+    main()
