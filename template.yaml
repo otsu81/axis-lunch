@@ -9,6 +9,17 @@ Parameters:
     Type: String
     Default: bucket
     Description: Name of the S3 bucket for hosting the static website
+  DDBTableName:
+    Type: String
+    Default: tablename
+    Description: The name of the DynamoDB table for storing parsed menus
+  DDBTTLEnabled:
+    Type: String
+    Default: false
+    Description: TTL enabled or disabled on DynamoDB entries
+    AllowedValues:
+      - true
+      - false
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -16,7 +27,8 @@ Globals:
     Timeout: 60
 
 Resources:
-  FunctionsRole:
+
+  AxisLunchServerlessRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: AxisLunchScraperLambdaRole
@@ -33,10 +45,30 @@ Resources:
             Action:
               - 'sts:AssumeRole'
 
+  LunchTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref DDBTableName
+      AttributeDefinitions:
+        - AttributeName: "restaurant"
+          AttributeType: "S"
+        - AttributeName: "fetchDate"
+          AttributeType: "S"
+        - AttributeName: "ttl"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "restaurant"
+          KeyType: HASH
+        - AttributeName: "fetchDate"
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: !Ref DDBTTLEnabled
+
   HTMLS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      Description: The S3 bucket for the static website
       BucketName: !Ref HTMLBucketName
 
   HTMLGeneratorFunction:
@@ -45,7 +77,7 @@ Resources:
       CodeUri: html_generator/
       Handler: main.handler
       Runtime: python3.8
-      Role: !GetAtt FunctionsRole.Arn
+      Role: !GetAtt AxisLunchServerlessRole.Arn
       Environment:
         Variables:
           S3_BUCKET: !GetAtt HTMLS3Bucket.Arn
@@ -56,12 +88,15 @@ Resources:
       CodeUri: scraper/
       Handler: main.handler
       Runtime: python3.8
-      Role: !GetAtt FunctionsRole.Arn
+      Role: !GetAtt AxisLunchServerlessRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DDBTableName
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  FunctionsRole:
+  AxisLunchServerlessRole:
     Description: Role created for Axis Lunch scraper
-    Value: !GetAtt FunctionsRole.Arn
+    Value: !GetAtt AxisLunchServerlessRole.Arn

@@ -16,6 +16,7 @@ to_seconds = {
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 log = logging.getLogger('ddb_table')
 
+
 class RestaurantTable():
 
     def __init__(self):
@@ -73,6 +74,7 @@ class RestaurantTable():
         log.info(json.dumps(response, indent=4, default=str))
 
     def get_restaurant_menus(self):
+        log.info('SCAN operation: Getting all menu items')
         return self.client.scan(
             TableName=self.table_name,
             IndexName='restaurant-index'
