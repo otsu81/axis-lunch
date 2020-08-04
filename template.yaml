@@ -81,6 +81,24 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref HTMLBucketName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  BucketWebsitePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref HTMLS3Bucket
+      PolicyDocument:
+        Statement:
+        - Sid: PublicReadGetObjectForWebsite
+          Effect: Allow
+          Principal: "*"
+          Action: s3:GetObject
+          Resource:
+            !Join
+            - ""
+            - - !GetAtt HTMLS3Bucket.Arn
+              - "/*"
 
   LayerDependencies:
     Type: AWS::Serverless::LayerVersion

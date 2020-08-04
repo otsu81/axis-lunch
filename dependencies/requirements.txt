@@ -1,11 +1,7 @@
 beautifulsoup4==4.9.1
-boto3==1.14.6
-botocore==1.17.6
 bs4==0.0.1
 jmespath==0.10.0
 python-dateutil==2.8.1
-python-dotenv==0.13.0
-python-interface==1.6.0
 requests==2.23.0
 soupsieve==2.0.1
 urllib3==1.25.9

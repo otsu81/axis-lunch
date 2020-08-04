@@ -11,8 +11,7 @@ log = logging.getLogger('html_generator')
 def get_restaurant_menu_dict():
     ddb = boto3.client('dynamodb')
     result = ddb.scan(
-        TableName=os.environ.get('TABLE_NAME'),
-        IndexName=os.environ.get('TABLE_GSI')
+        TableName=os.environ.get('TABLE_NAME')
     )
     restaurant_menus = dict()
     for r in result['Items']:
