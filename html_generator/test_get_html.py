@@ -14,5 +14,6 @@ def write_html(restaurant_name):
 
 
 write_html('PAOLOS')
+write_html('PAOLOS')
 write_html('PIEPLOW')
 write_html('PIEPLOW')
