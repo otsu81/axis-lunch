@@ -31,6 +31,30 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest
+    # - name: Test with pytest
+    #   run: |
+    #     pytest
+
+  aws_sam:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: sam build
+        uses: youyo/aws-sam-action/python3.8@master
+        with:
+          sam_command: 'build --use-container'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PRIV_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PUB_KEY }}
+          AWS_DEFAULT_REGION: eu-north-1
+
+      - name: sam deploy
+        uses: youyo/aws-sam-action/python3.8@master
+        with:
+          sam_command: 'deploy --no-fail-on-empty-changeset'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PRIV_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PUB_KEY }}
+          AWS_DEFAULT_REGION: eu-north-1
