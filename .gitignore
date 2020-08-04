@@ -245,3 +245,4 @@ $RECYCLE.BIN/
 # own stuff
 __pycache__/
 *sandbox*
+.aws-sam/

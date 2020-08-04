@@ -4,10 +4,8 @@ import time
 import logging
 import json
 from datetime import datetime
-from dotenv import load_dotenv
 
 
-load_dotenv()
 to_seconds = {
     'HOUR': 3600,
     'DAY': 86400,

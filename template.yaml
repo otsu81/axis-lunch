@@ -27,7 +27,6 @@ Globals:
     Timeout: 60
 
 Resources:
-
   AxisLunchServerlessRole:
     Type: AWS::IAM::Role
     Properties:
@@ -43,7 +42,21 @@ Resources:
               Service:
               - lambda.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: DdbS3Permissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:Scan
+                Resource: !GetAtt LunchTable.Arn
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !GetAtt HTMLS3Bucket.Arn
 
   LunchTable:
     Type: AWS::DynamoDB::Table
@@ -53,8 +66,6 @@ Resources:
         - AttributeName: "restaurant"
           AttributeType: "S"
         - AttributeName: "fetchDate"
-          AttributeType: "S"
-        - AttributeName: "ttl"
           AttributeType: "S"
       KeySchema:
         - AttributeName: "restaurant"
@@ -71,6 +82,15 @@ Resources:
     Properties:
       BucketName: !Ref HTMLBucketName
 
+  LayerDependencies:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: dependencies/
+      CompatibleRuntimes:
+        - python3.8
+    Metadata:
+      BuildMethod: python3.8
+
   HTMLGeneratorFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -78,9 +98,15 @@ Resources:
       Handler: main.handler
       Runtime: python3.8
       Role: !GetAtt AxisLunchServerlessRole.Arn
+      Layers:
+        - !Ref LayerDependencies
       Environment:
         Variables:
-          S3_BUCKET: !GetAtt HTMLS3Bucket.Arn
+          S3_BUCKET: HTMLS3Bucket
+          TABLE_NAME: !Ref DDBTableName
+          INDEX_TEMPLATE_PATH: html_templates/index_template.html
+          MENU_TEMPLATE_PATH: html_templates/row_template.html
+          OUTPUT_PATH: html/index.html
 
   ScraperFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -89,9 +115,14 @@ Resources:
       Handler: main.handler
       Runtime: python3.8
       Role: !GetAtt AxisLunchServerlessRole.Arn
+      Layers:
+        - !Ref LayerDependencies
       Environment:
         Variables:
           TABLE_NAME: !Ref DDBTableName
+          LOGLEVEL: INFO
+          PIEPLOW: "https://lund.pieplowsmat.se/street-food/"
+          PAOLOS: "https://www.elite.se/sv/hotell/lund/hotel-ideon/paolos/"
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

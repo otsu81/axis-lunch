@@ -2,10 +2,8 @@ import boto3
 import logging
 import json
 import os
-from dotenv import load_dotenv
 from html_generator import HTMLGenerator
 
-load_dotenv()
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 log = logging.getLogger('html_generator')
 
@@ -55,10 +53,6 @@ def main():
     ).make_html()
 
     copy_html_to_s3(index_html, 'index.html')
-
-
-if __name__ == '__main__':
-    main()
 
 
 def handler(event, context):

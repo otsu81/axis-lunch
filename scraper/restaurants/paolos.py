@@ -1,9 +1,12 @@
 import requests
+import logging
+import os
 from bs4 import BeautifulSoup
 from restaurants.abstract_restaurant import AbstractRestaurant
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 log = logging.getLogger('paolos_parser')
+
 
 class Paolos(AbstractRestaurant):
 

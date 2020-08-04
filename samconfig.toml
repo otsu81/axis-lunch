@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "axisLunch"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-100gh3klfd7f0"
+s3_prefix = "axisLunch"
+region = "eu-north-1"
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "HTMLBucketName=\"axis-lunch\" DDBTableName=\"axis-lunch\" DDBTTLEnabled=\"false\""
+

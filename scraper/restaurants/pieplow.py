@@ -7,6 +7,7 @@ from restaurants.abstract_restaurant import AbstractRestaurant
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 log = logging.getLogger('pieplow_parser')
 
+
 class Pieplow(AbstractRestaurant):
 
     def menu_for_weekday(self, menu_soup, weekday, next_weekday):
