@@ -9,11 +9,12 @@ on:
 jobs:
 
   lint:
-
     runs-on: ubuntu-latest
 
     steps:
+
     - uses: actions/checkout@v2
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
@@ -36,3 +37,35 @@ jobs:
       uses: scottbrenner/cfn-lint-action@master
       with:
         args: "**/*.yaml"
+
+  sam:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Configure AWS credentials
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.SANDBOX_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.DEFAULT_REGION }}
+
+    - name: SAM build
+      env:
+        SAM_CLI_TELEMETRY: 0
+      run: |
+        sam build --use-container
+
+    - name: SAM deploy
+      env:
+        SAM_CLI_TELEMETRY: 0
+      run: |
+        sam deploy
