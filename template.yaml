@@ -145,10 +145,30 @@ Resources:
           PIEPLOW: "https://lund.pieplowsmat.se/street-food/"
           PAOLOS: "https://www.elite.se/sv/hotell/lund/hotel-ideon/paolos/"
 
+  ScrapeAndGenerateStatemachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachine/scrapeAndGenerate.asl.json
+      DefinitionSubstitutions:
+        ScraperFunctionArn: !GetAtt ScraperFunction.Arn
+        HTMLGeneratorFunctionArn: !GetAtt HTMLGeneratorFunction.Arn
+      Events:
+        FetchEvery3Hours:
+          Type: Schedule
+          Properties:
+            Description: Runs the statemachine to parse and generate once every 3 hours
+            Enabled: True
+            Schedule: "rate(3 hours)"
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ScraperFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref HTMLGeneratorFunction
+
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   AxisLunchServerlessRole:
     Description: Role created for Axis Lunch scraper
     Value: !GetAtt AxisLunchServerlessRole.Arn
+  StatemachineArn:
+    Description: The ARN of the scraper statemachine ARN
+    Value: !Ref ScrapeAndGenerateStatemachine
