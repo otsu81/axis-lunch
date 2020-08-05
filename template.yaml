@@ -56,8 +56,11 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:PutObject
-                Resource: !GetAtt HTMLS3Bucket.Arn
-
+                Resource:
+                  !Join
+                  - ""
+                  - - !GetAtt HTMLS3Bucket.Arn
+                    - "/*"
   LunchTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -120,7 +123,7 @@ Resources:
         - !Ref LayerDependencies
       Environment:
         Variables:
-          S3_BUCKET: HTMLS3Bucket
+          S3_BUCKET: !Ref HTMLS3Bucket
           TABLE_NAME: !Ref DDBTableName
           INDEX_TEMPLATE_PATH: html_templates/index_template.html
           MENU_TEMPLATE_PATH: html_templates/row_template.html

@@ -69,3 +69,9 @@ jobs:
         SAM_CLI_TELEMETRY: 0
       run: |
         sam deploy
+
+    - name: Copy HTML files
+      env:
+        BUCKET: ${{ secrets.BUCKET }}
+      run: |
+        aws s3 sync html/ s3://$BUCKET
