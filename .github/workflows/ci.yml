@@ -75,3 +75,8 @@ jobs:
         BUCKET: ${{ secrets.BUCKET }}
       run: |
         aws s3 sync html/ s3://$BUCKET
+
+    - name: Run stepfunction
+      run: |
+        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`axisLunch`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
+        aws stepfunctions start-execution --state-machine-arn $ARN
