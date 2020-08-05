@@ -68,7 +68,7 @@ jobs:
       env:
         SAM_CLI_TELEMETRY: 0
       run: |
-        sam deploy -no-fail-on-empty-changeset
+        sam deploy --no-fail-on-empty-changeset
 
     - name: Copy HTML files
       env:
