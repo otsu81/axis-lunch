@@ -1,0 +1,22 @@
+{
+    "Comment": "Runs the restaurant parser and generates the HTML",
+    "StartAt": "Scrape",
+    "States": {
+        "Scrape": {
+            "Comment": "Scrapes the restaurants as defined by the ENV variables in the function",
+            "Type": "Task",
+            "Resource": "${ScraperFunctionArn}",
+            "Next": "Generate"
+        },
+        "Generate": {
+                "Comment": "Generates HTML from the DynamoDB table",
+                "Type": "Task",
+                "Resource": "${HTMLGeneratorFunctionArn}",
+                "Next": "End"
+        },
+        "End": {
+            "Type": "Pass",
+            "End": true
+        }
+    }
+}
