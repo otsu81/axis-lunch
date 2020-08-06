@@ -170,6 +170,7 @@ Resources:
           LOGLEVEL: INFO
           PIEPLOW: "https://lund.pieplowsmat.se/street-food/"
           PAOLOS: "https://www.elite.se/sv/hotell/lund/hotel-ideon/paolos/"
+          EDISON: "http://restaurangedison.se/lunch"
 
   ScrapeAndGenerateStatemachine:
     Type: AWS::Serverless::StateMachine

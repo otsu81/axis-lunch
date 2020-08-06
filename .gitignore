@@ -246,3 +246,4 @@ $RECYCLE.BIN/
 __pycache__/
 *sandbox*
 .aws-sam/
+.env

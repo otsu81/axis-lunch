@@ -3,6 +3,7 @@ import json
 import logging
 from restaurants.paolos import Paolos
 from restaurants.pieplow import Pieplow
+from restaurants.edison import Edison
 from ddb import RestaurantTable
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
@@ -12,10 +13,12 @@ log = logging.getLogger('scraper')
 def handler(event, context):
     paolos_menu = Paolos().get_week_menu(os.environ['PAOLOS'])
     pieplow_menu = Pieplow().get_week_menu(os.environ['PIEPLOW'])
+    edison_menu = Edison.get_week_menu(os.environ['EDISON'])
 
     menu = {
         'Paolos': paolos_menu,
-        'Pieplow': pieplow_menu
+        'Pieplow': pieplow_menu,
+        'Edison': edison_menu
     }
 
     ddb = RestaurantTable()
