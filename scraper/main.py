@@ -13,7 +13,7 @@ log = logging.getLogger('scraper')
 def handler(event, context):
     paolos_menu = Paolos().get_week_menu(os.environ['PAOLOS'])
     pieplow_menu = Pieplow().get_week_menu(os.environ['PIEPLOW'])
-    edison_menu = Edison.get_week_menu(os.environ['EDISON'])
+    edison_menu = Edison().get_week_menu(os.environ['EDISON'])
 
     menu = {
         'Paolos': paolos_menu,
