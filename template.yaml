@@ -20,6 +20,24 @@ Parameters:
     AllowedValues:
       - true
       - false
+  CloudfrontDistribution:
+    Type: String
+    Default: false
+    Description: Choose TRUE if there is an active Cloudfront distribution to restrict bucket access to the Origin Access Idenity. If FALSE, bucket read access is PUBLIC
+    AllowedValues:
+      - true
+      - false
+  CloudfrontOriginAccessId:
+    Type: String
+    Description: The OAI for a Cloudfront distribution, restricts S3 access to Cloudfront only if CloudfrontEnabled is TRUE. Leave blank if no Cloudfront
+    Default: ""
+    AllowedPattern: ^[A-Z0-9]*$
+
+Conditions:
+  CloudfrontEnabled:
+    !Equals
+      - !Ref CloudfrontDistribution
+      - true
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -95,7 +113,15 @@ Resources:
         Statement:
         - Sid: PublicReadGetObjectForWebsite
           Effect: Allow
-          Principal: "*"
+          Principal:
+            !If
+              - CloudfrontEnabled
+              - AWS:
+                  !Join
+                    - ""
+                    - - "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity "
+                      - !Ref CloudfrontOriginAccessId
+              - "*"
           Action: s3:GetObject
           Resource:
             !Join
