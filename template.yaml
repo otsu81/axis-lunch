@@ -185,7 +185,7 @@ Resources:
           Properties:
             Description: Runs the statemachine to parse and generate once every 3 hours
             Enabled: True
-            Schedule: "rate(3 hours)"
+            Schedule: "cron(0/20 9-14 ? * mon-fri *)"
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref ScraperFunction

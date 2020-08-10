@@ -1,10 +1,8 @@
 name: AxisLunchDevBranch
 
 on:
-  push:
-    branches: [ dev ]
   pull_request:
-    branches: [ dev ]
+    branches: [ master ]
 
 jobs:
 
