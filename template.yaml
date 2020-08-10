@@ -5,6 +5,10 @@ Description: >
 
 # CFN parameters:
 Parameters:
+  RoleName:
+    Type: String
+    Default: AxisLunchScraperLambdaRole
+    Description: The name of the IAM role used by the scraper
   HTMLBucketName:
     Type: String
     Default: bucket
@@ -48,7 +52,7 @@ Resources:
   AxisLunchServerlessRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: AxisLunchScraperLambdaRole
+      RoleName: !Ref RoleName
       Description: The IAM role allowing the Axis Lunch scraper to function
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
@@ -185,7 +189,7 @@ Resources:
           Properties:
             Description: Runs the statemachine to parse and generate once every 3 hours
             Enabled: True
-            Schedule: "cron(0/20 9-14 ? * mon-fri *)"
+            Schedule: "cron(0/20 9-12 ? * mon-fri *)"
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref ScraperFunction
@@ -193,6 +197,9 @@ Resources:
             FunctionName: !Ref HTMLGeneratorFunction
 
 Outputs:
+  S3WebsiteUrl:
+    Description: The URL for the S3 website
+    Value: !GetAtt HTMLS3Bucket.WebsiteURL
   AxisLunchServerlessRole:
     Description: Role created for Axis Lunch scraper
     Value: !GetAtt AxisLunchServerlessRole.Arn
