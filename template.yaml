@@ -7,7 +7,7 @@ Description: >
 Parameters:
   RoleName:
     Type: String
-    Default: AxisLunchScraperLambdaRole
+    Default: ScraperLambdaRole
     Description: The name of the IAM role used by the scraper
   HTMLBucketName:
     Type: String

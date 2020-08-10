@@ -1,6 +1,8 @@
 name: AxisLunchDevBranch
 
 on:
+  push:
+    branches: [ dev ]
   pull_request:
     branches: [ master ]
 
@@ -56,25 +58,50 @@ jobs:
         aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
+    - name: set DEV ENV variables
+      if: github.ref == 'refs/heads/dev'
+      env:
+        BUCKET: ${{ secrets.BUCKET_DEV }}
+        STACK_NAME: ${{ secrets.STACK_NAME_DEV }}
+        DDB_TABLE: ${{ secrets.DDB_TABLE_DEV }}
+        ROLENAME: ${{ secrets.ROLENAME_DEV }}
+        CLOUDFRONT_DISTRIBUTION: false
+        CLOUDFRONT_OAI: ""
+
+    - name: set MASTER ENV variables
+      if: github.ref == 'refs/heads/master'
+      env:
+        BUCKET: ${{ secrets.BUCKET }}
+        STACK_NAME: ${{ secrets.STACK_NAME }}
+        DDB_TABLE: ${{ secrets.DDB_TABLE }}
+        ROLENAME: ${{ secrets.ROLENAME }}
+        CLOUDFRONT_DISTRIBUTION: true
+        CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
+
     - name: SAM build
       env:
         SAM_CLI_TELEMETRY: 0
       run: |
         sam build --use-container
 
-    - name: SAM deploy
+    - name: SAM deploy DEV
       env:
         SAM_CLI_TELEMETRY: 0
       run: |
-        sam deploy --no-fail-on-empty-changeset
+        sam deploy \
+          --no-fail-on-empty-changeset \
+          --stack-name $STACK_NAME \
+          --parameter-overrides \
+              RoleName=$ROLENAME \
+              HTMLBucketName=$BUCKET \
+              CloudfrontDistribution=$CLOUDFRONT_DISTRIBUTION \
+              DDBTableName=$DDB_TABLE
 
     - name: Copy HTML files
-      env:
-        BUCKET: ${{ secrets.BUCKET }}
       run: |
         aws s3 sync html/ s3://$BUCKET
 
     - name: Run stepfunction
       run: |
-        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`axisLunch`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
+        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`$STACK_NAME`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
         aws stepfunctions start-execution --state-machine-arn $ARN
