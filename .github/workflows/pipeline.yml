@@ -2,7 +2,10 @@ name: AxisLunchDevBranch
 
 on:
   push:
-    branches: [ dev master ]
+    branches: [ dev ]
+  pull_request:
+    types: [ closed ]
+    branches: [ master ]
 
 jobs:
 
