@@ -70,20 +70,13 @@ jobs:
 
     - name: set MASTER ENV variables
       if: github.ref == 'refs/heads/master'
-      env:
-        BUCKET: ${{ secrets.BUCKET }}
-        STACK_NAME: ${{ secrets.STACK_NAME }}
-        DDB_TABLE: ${{ secrets.DDB_TABLE }}
-        ROLENAME: ${{ secrets.ROLENAME }}
-        CLOUDFRONT_DISTRIBUTION: true
-        CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
       run: |
-        echo "::set-env name=BUCKET::$BUCKET"
-        echo "::set-env name=STACK_NAME::$STACK_NAME"
-        echo "::set-env name=DDB_TABLE::$DDB_TABLE"
-        echo "::set-env name=ROLENAME::$ROLENAME"
-        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::$CLOUDFRONT_DISTRIBUTION"
-        echo "::set-env name=CLOUDFRONT_OAI::$CLOUDFRONT_OAI"
+        echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
+        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
+        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
+        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
+        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
+        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
 
 
     - name: SAM build
