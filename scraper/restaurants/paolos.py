@@ -11,11 +11,13 @@ log = logging.getLogger('paolos_parser')
 class Paolos(AbstractRestaurant):
 
     def menu_for_weekday(self, menu_soup, weekday, next_weekday):
-        return '\n'.join(map(
-            str, menu_soup[
-                menu_soup.index(weekday)+1:menu_soup.index(next_weekday)-1
-            ]
-        ))
+        return '\n'.join(
+            map(str,
+                menu_soup[
+                    menu_soup.index(weekday)+1:menu_soup.index(next_weekday)-1
+                    ]
+                )
+            )
 
     def get_week_menu(self, url):
         try:

@@ -4,7 +4,7 @@ on:
   push:
     branches: [ dev ]
   pull_request:
-    branches: [ dev ]
+    branches: [ master ]
 
 jobs:
 
@@ -58,6 +58,27 @@ jobs:
         aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
+    - name: set DEV ENV variables
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        echo "::set-env name=BUCKET::${{ secrets.BUCKET_DEV }}"
+        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME_DEV }}"
+        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE_DEV }}"
+        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME_DEV }}"
+        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::false"
+        echo "::set-env name=CLOUDFRONT_OAI::"
+
+    - name: set MASTER ENV variables
+      if: github.ref == 'refs/heads/master'
+      run: |
+        echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
+        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
+        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
+        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
+        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
+        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
+
+
     - name: SAM build
       env:
         SAM_CLI_TELEMETRY: 0
@@ -68,15 +89,20 @@ jobs:
       env:
         SAM_CLI_TELEMETRY: 0
       run: |
-        sam deploy --no-fail-on-empty-changeset
+        sam deploy \
+          --no-fail-on-empty-changeset \
+          --stack-name $STACK_NAME \
+          --parameter-overrides \
+              RoleName=$ROLENAME \
+              HTMLBucketName=$BUCKET \
+              CloudfrontDistribution=$CLOUDFRONT_DISTRIBUTION \
+              DDBTableName=$DDB_TABLE
 
     - name: Copy HTML files
-      env:
-        BUCKET: ${{ secrets.BUCKET }}
       run: |
         aws s3 sync html/ s3://$BUCKET
 
     - name: Run stepfunction
       run: |
-        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`axisLunch`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
+        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`'$STACK_NAME'`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
         aws stepfunctions start-execution --state-machine-arn $ARN

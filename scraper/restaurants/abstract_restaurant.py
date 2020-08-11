@@ -9,11 +9,14 @@ class AbstractRestaurant(ABC):
         super().__init__()
 
     @abstractmethod
-    def menu_for_weekday(self, menu_soup, weekday, next_weekday):
-        pass
-
-    @abstractmethod
     def get_week_menu(self, url):
+        """
+        Fetches the menu of the week from a specific restaurant
+
+        :param str url: the URL of the restaurant page to be scraped
+        :return: the week's menu
+        :type: dict
+        """
         pass
 
     def make_empty_menu(self, exception):
