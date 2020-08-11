@@ -104,6 +104,5 @@ jobs:
 
     - name: Run stepfunction
       run: |
-        aws cloudformation describe-stacks --query 'Stacks[?StackName==`$STACK_NAME`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text
-        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`$STACK_NAME`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
+        ARN=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`'$STACK_NAME'`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' --output text)
         aws stepfunctions start-execution --state-machine-arn $ARN
