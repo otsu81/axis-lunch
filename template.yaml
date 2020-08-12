@@ -73,8 +73,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:UpdateItem
-                  - dynamodb:Scan
-                Resource: !GetAtt LunchTable.Arn
+                  - dynamodb:Query
+                Resource:
+                  !Join
+                  - ""
+                  - - !GetAtt LunchTable.Arn
+                    - "/*"
               - Effect: Allow
                 Action:
                   - s3:PutObject
@@ -173,6 +177,7 @@ Resources:
           INDEX_TEMPLATE_PATH: html_templates/index_template.html
           MENU_TEMPLATE_PATH: html_templates/row_template.html
           OUTPUT_PATH: html/index.html
+          LOGLEVEL: INFO
 
   ScraperFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
