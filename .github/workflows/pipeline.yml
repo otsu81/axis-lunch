@@ -14,11 +14,18 @@ jobs:
 
     steps:
 
-    - name: checkout master and set PROD variables
+    - name: checkout master
       uses: actions/checkout@v2
       if: github.base_ref == 'master'
       with:
         ref: master
+
+    - name: checkout referencing branch
+      if: github.base_ref != 'master'
+      uses: actions/checkout@v2
+
+    - name: set PROD variables if master merge
+      if: github.base_ref == 'master'
       run: |
         echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
         echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
@@ -27,8 +34,7 @@ jobs:
         echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
         echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
 
-    - name: if dev branch set DEV variables
-      uses: actions/checkout@v2
+    - name: set DEV env if push to dev branch
       if: github.ref == 'refs/heads/dev'
       run: |
         echo "::set-env name=BUCKET::${{ secrets.BUCKET_DEV }}"
