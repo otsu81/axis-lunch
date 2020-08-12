@@ -187,9 +187,6 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DDBTableName
           LOGLEVEL: INFO
-          PIEPLOW: "https://lund.pieplowsmat.se/street-food/"
-          PAOLOS: "https://www.elite.se/sv/hotell/lund/hotel-ideon/paolos/"
-          EDISON: "http://restaurangedison.se/lunch"
 
   ScrapeAndGenerateStatemachine:
     Type: AWS::Serverless::StateMachine
@@ -199,10 +196,10 @@ Resources:
         ScraperFunctionArn: !GetAtt ScraperFunction.Arn
         HTMLGeneratorFunctionArn: !GetAtt HTMLGeneratorFunction.Arn
       Events:
-        FetchEvery3Hours:
+        StatemachineInterval:
           Type: Schedule
           Properties:
-            Description: Runs the statemachine to parse and generate once every 3 hours
+            Description: Defines the interval for how often the statemachine should run
             Enabled: True
             Schedule: "cron(0/20 9-12 ? * mon-fri *)"
       Policies:
