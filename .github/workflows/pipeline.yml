@@ -14,7 +14,29 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v2
+    - name: checkout master and set PROD variables
+      uses: actions/checkout@v2
+      if: github.base_ref == 'master'
+      with:
+        ref: master
+      run: |
+        echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
+        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
+        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
+        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
+        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
+        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
+
+    - name: if dev branch set DEV variables
+      uses: actions/checkout@v2
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        echo "::set-env name=BUCKET::${{ secrets.BUCKET_DEV }}"
+        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME_DEV }}"
+        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE_DEV }}"
+        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME_DEV }}"
+        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::false"
+        echo "::set-env name=CLOUDFRONT_OAI::"
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -58,27 +80,6 @@ jobs:
         aws-access-key-id: ${{ secrets.SANDBOX_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.DEFAULT_REGION }}
-
-    - name: set DEV ENV variables
-      if: github.ref == 'refs/heads/dev'
-      run: |
-        echo "::set-env name=BUCKET::${{ secrets.BUCKET_DEV }}"
-        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME_DEV }}"
-        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE_DEV }}"
-        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME_DEV }}"
-        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::false"
-        echo "::set-env name=CLOUDFRONT_OAI::"
-
-    - name: set MASTER ENV variables
-      if: github.ref == 'refs/heads/master'
-      run: |
-        echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
-        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
-        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
-        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
-        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
-        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
-
 
     - name: SAM build
       env:
