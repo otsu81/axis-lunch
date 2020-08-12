@@ -101,6 +101,21 @@ Resources:
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: !Ref DDBTTLEnabled
+      GlobalSecondaryIndexes:
+        - IndexName: sortByDate
+          KeySchema:
+          - AttributeName: "restaurant"
+            KeyType: HASH
+          - AttributeName: "fetchDate"
+            KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - mon
+              - tue
+              - wed
+              - thu
+              - fri
 
   HTMLS3Bucket:
     Type: AWS::S3::Bucket
