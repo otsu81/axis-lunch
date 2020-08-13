@@ -193,7 +193,7 @@ Resources:
           TABLE_NAME: !Ref DDBTableName
           LOGLEVEL: INFO
 
-  ScrapeAndGenerateStatemachine:
+  Statemachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: statemachine/scrapeAndGenerate.asl.json
@@ -222,4 +222,4 @@ Outputs:
     Value: !GetAtt AxisLunchServerlessRole.Arn
   StatemachineArn:
     Description: The ARN of the scraper statemachine ARN
-    Value: !Ref ScrapeAndGenerateStatemachine
+    Value: !Ref Statemachine
