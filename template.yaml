@@ -73,8 +73,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:UpdateItem
-                  - dynamodb:Scan
-                Resource: !GetAtt LunchTable.Arn
+                  - dynamodb:Query
+                Resource:
+                  !Join
+                  - ""
+                  - - !GetAtt LunchTable.Arn
+                    - "/*"
               - Effect: Allow
                 Action:
                   - s3:PutObject
@@ -101,6 +105,21 @@ Resources:
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: !Ref DDBTTLEnabled
+      GlobalSecondaryIndexes:
+        - IndexName: sortByDate
+          KeySchema:
+          - AttributeName: "restaurant"
+            KeyType: HASH
+          - AttributeName: "fetchDate"
+            KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - mon
+              - tue
+              - wed
+              - thu
+              - fri
 
   HTMLS3Bucket:
     Type: AWS::S3::Bucket
@@ -158,6 +177,7 @@ Resources:
           INDEX_TEMPLATE_PATH: html_templates/index_template.html
           MENU_TEMPLATE_PATH: html_templates/row_template.html
           OUTPUT_PATH: html/index.html
+          LOGLEVEL: INFO
 
   ScraperFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -172,11 +192,8 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DDBTableName
           LOGLEVEL: INFO
-          PIEPLOW: "https://lund.pieplowsmat.se/street-food/"
-          PAOLOS: "https://www.elite.se/sv/hotell/lund/hotel-ideon/paolos/"
-          EDISON: "http://restaurangedison.se/lunch"
 
-  ScrapeAndGenerateStatemachine:
+  Statemachine:
     Type: AWS::Serverless::StateMachine
     Properties:
       DefinitionUri: statemachine/scrapeAndGenerate.asl.json
@@ -184,10 +201,10 @@ Resources:
         ScraperFunctionArn: !GetAtt ScraperFunction.Arn
         HTMLGeneratorFunctionArn: !GetAtt HTMLGeneratorFunction.Arn
       Events:
-        FetchEvery3Hours:
+        StatemachineInterval:
           Type: Schedule
           Properties:
-            Description: Runs the statemachine to parse and generate once every 3 hours
+            Description: Defines the interval for how often the statemachine should run
             Enabled: True
             Schedule: "cron(0/20 9-12 ? * mon-fri *)"
       Policies:
@@ -205,4 +222,4 @@ Outputs:
     Value: !GetAtt AxisLunchServerlessRole.Arn
   StatemachineArn:
     Description: The ARN of the scraper statemachine ARN
-    Value: !Ref ScrapeAndGenerateStatemachine
+    Value: !Ref Statemachine

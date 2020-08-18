@@ -5,9 +5,12 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="dateHighlight.js"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
     </head>
     <body>
+
         <h1>Lunch@Axis</h1>
+
         <table cellspacing=0 cellpadding=0>
             <tbody>
                 <tr class="days">
@@ -40,4 +43,35 @@
             </tbody>
         </table>
 
-</body></html>
+        <div class="well">
+            <h2>About</h2>
+                <a class="github-button" href="https://github.com/otsu81/axis-lunch" data-show-count="true" aria-label="Star otsu81/axis-lunch on GitHub">Star</a>            <p>
+                <strong>Missing parse?</strong>
+                The scraper failed to parse the menu for this particular restaurant. This could be due to the restaurant chaning the menu layout, not offering lunch for this particular week, or some other issue. Feel free to report through the Github issue tracker.
+            </p>
+            <p>
+                <strong>Missing restaurant?</strong>
+                Feel free to make a pull request for any restaurant you feel is relevant.
+            </p>
+            <p>
+                <strong>Why?</strong>
+                Primarily, I wanted to learn Github actions. Also, it's nice to have all menus in one place.
+            </p>
+            <p>
+                <strong>Who?</strong>
+                Someone at the IT department at Axis Communications in Lund, Sweden.
+            </p>
+            <p>
+                <strong>How?</strong>
+                Through a very convoluted process to generate static content using Amazon Web Services, built with <a href="https://aws.amazon.com/serverless/sam/" target=_blank>SAM</a> and hosted in S3. You can view the source code on <a href="https://github.com/otsu81/axis-lunch" target=_blank>Github</a>. Please feel free to contribute!
+            </p>
+
+            <p class="bg-warning">
+                <strong>Please note:</strong> This site is in no shape or form affiliated with Axis Communications AB or any of the restaurants with menus presented here.
+            </p>
+
+          </div>
+    </body
+></html>
+
+

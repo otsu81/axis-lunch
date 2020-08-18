@@ -11,26 +11,32 @@ log = logging.getLogger('scraper')
 
 
 def handler(event, context):
-    paolos_menu = Paolos().get_week_menu(os.environ['PAOLOS'])
-    pieplow_menu = Pieplow().get_week_menu(os.environ['PIEPLOW'])
-    edison_menu = Edison().get_week_menu(os.environ['EDISON'])
 
-    menu = {
-        'Paolos': paolos_menu,
-        'Pieplow': pieplow_menu,
-        'Edison': edison_menu
+    classmap = {
+        'Paolos': Paolos(),
+        'Edison': Edison(),
+        'Pieplow': Pieplow()
     }
 
+    restaurants = dict()
+    with open('restaurants.csv', 'r') as f:
+        for r in f.readlines():
+            info = r.rstrip().split(',')
+            restaurants[info[0]] = \
+                classmap[info[0]].get_week_menu(info[1])
+            restaurants[info[0]]['url'] = info[1]
     ddb = RestaurantTable()
-    for r in menu:
-        ddb.update_restaurant_menu(
-            r, menu[r]
+    for r in restaurants:
+        ddb.update_restaurant_item(
+            r, restaurants[r]
         )
 
-    log.info(json.dumps(menu, indent=4, default=str))
-    return json.dumps(
-        {'success': 'true'}
-    )
+    log.info(json.dumps(restaurants, indent=4, default=str))
+
+    return {
+            'success': 'true',
+            'restaurants': list(restaurants.keys())
+        }
 
 
 if __name__ == '__main__':

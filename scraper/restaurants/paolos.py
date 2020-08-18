@@ -10,11 +10,11 @@ log = logging.getLogger('paolos_parser')
 
 class Paolos(AbstractRestaurant):
 
-    def menu_for_weekday(self, menu_soup, weekday, next_weekday):
+    def menu_for_weekday(self, menu_list, weekday, next_weekday):
         return '\n'.join(
             map(str,
-                menu_soup[
-                    menu_soup.index(weekday)+1:menu_soup.index(next_weekday)-1
+                menu_list[
+                    menu_list.index(weekday)+1:menu_list.index(next_weekday)
                     ]
                 )
             )
@@ -22,22 +22,30 @@ class Paolos(AbstractRestaurant):
     def get_week_menu(self, url):
         try:
             soup = BeautifulSoup(requests.get(url).text, 'html.parser')
-            hotel_head = soup.find('div', {'class': 'hotelhead'})
+
+            menu_head = soup.find_all('div', {'class': 'menu-block__text'})
+            items = menu_head[0].find_all(['p', 'h4'])
+
+            for i in items:
+                spans = i.find_all('span', {'class': 'menu-block__price'})
+                if spans:
+                    spans[0].extract()
 
             menu_list = list()
-            for tag in hotel_head.find_all('p'):
-                for child in tag.children:
-                    if child.string and ',' not in child.string:
-                        menu_list.append(child.string.rstrip())
+            for i in items:
+                item = i.get_text().lstrip().rstrip()
+                if item != '':
+                    menu_list.append(item)
 
             menu = dict()
-            menu['mon'] = self.menu_for_weekday(menu_list, 'MÅNDAG', 'TISDAG')
-            menu['tue'] = self.menu_for_weekday(menu_list, 'TISDAG', 'ONSDAG')
-            menu['wed'] = self.menu_for_weekday(menu_list, 'ONSDAG', 'TORSDAG')
-            menu['thu'] = self.menu_for_weekday(menu_list, 'TORSDAG', 'FREDAG')
-            menu['fri'] = self.menu_for_weekday(
-                menu_list, 'FREDAG', 'PÅ KVÄLLEN')
+            menu['mon'] = self.menu_for_weekday(menu_list, 'Måndag', 'Tisdag')
+            menu['tue'] = self.menu_for_weekday(menu_list, 'Tisdag', 'Onsdag')
+            menu['wed'] = self.menu_for_weekday(menu_list, 'Onsdag', 'Torsdag')
+            menu['thu'] = self.menu_for_weekday(menu_list, 'Torsdag', 'Fredag')
+            menu['fri'] = self.menu_for_weekday(menu_list, 'Fredag', 'Lördag')
 
             return menu
+
         except Exception as e:
+            log.warn(f"Exception parsing Paolos, {e}")
             return super().make_empty_menu(e)

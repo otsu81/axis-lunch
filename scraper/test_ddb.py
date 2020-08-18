@@ -1,6 +1,11 @@
-from ddb import RestaurantTable
 import json
+from restaurants.paolos import Paolos
 
 
-ddb = RestaurantTable()
-print(json.dumps(ddb.get_restaurant_menus(), indent=4, default=str))
+p = Paolos()
+print(
+    json.dumps(
+        p.get_week_menu("https://www.paolositalian.se/menyer/lund/"),
+        indent=4, default=str
+    )
+)

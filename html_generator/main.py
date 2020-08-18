@@ -2,27 +2,33 @@ import boto3
 import logging
 import json
 import os
+from boto3.dynamodb.conditions import Key
 from html_generator import HTMLGenerator
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 log = logging.getLogger('html_generator')
 
 
-def get_restaurant_menu_dict():
-    ddb = boto3.client('dynamodb')
-    result = ddb.scan(
-        TableName=os.environ.get('TABLE_NAME')
-    )
-    restaurant_menus = dict()
-    for r in result['Items']:
-        restaurant_menus[r['restaurant']['S']] = {
-            'mon': r['mon']['S'],
-            'tue': r['tue']['S'],
-            'wed': r['wed']['S'],
-            'thu': r['thu']['S'],
-            'fri': r['fri']['S']
-        }
-    return restaurant_menus
+def get_restaurant_menus_dict(restaurants):
+    ddb = boto3.resource('dynamodb')
+    table = ddb.Table(os.environ.get('TABLE_NAME'))
+
+    restaurants.sort()
+    menus = dict()
+    for r in restaurants:
+        result = table.query(
+            IndexName='sortByDate',
+            ConsistentRead=False,
+            ScanIndexForward=False,
+            Limit=1,
+            KeyConditionExpression=Key('restaurant').eq(r)
+        )
+        result['Items'][0].pop('restaurant')
+        result['Items'][0].pop('fetchDate')
+        menus[r] = result['Items'][0]
+
+    log.info(json.dumps(menus, indent=4, default=str))
+    return menus
 
 
 def copy_html_to_s3(file_contents, object_key):
@@ -36,8 +42,8 @@ def copy_html_to_s3(file_contents, object_key):
     log.info(json.dumps(result, indent=4, default=str))
 
 
-def main():
-    menus = get_restaurant_menu_dict()
+def main(event, context):
+    menus = get_restaurant_menus_dict(event['restaurants'])
 
     for r in menus:
         for d in menus[r]:
@@ -56,4 +62,4 @@ def main():
 
 def handler(event, context):
     log.info(json.dumps(event, indent=4, default=str))
-    main()
+    main(event, context)

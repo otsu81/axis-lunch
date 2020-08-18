@@ -12,11 +12,7 @@
                 "Comment": "Generates HTML from the DynamoDB table",
                 "Type": "Task",
                 "Resource": "${HTMLGeneratorFunctionArn}",
-                "Next": "End"
-        },
-        "End": {
-            "Type": "Pass",
-            "End": true
+                "End": true
         }
     }
 }
