@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup
 from restaurants.abstract_restaurant import AbstractRestaurant
 
-logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+logging.basicConfig(level=os.environ.get('LOGLEVEL', 'DEBUG'))
 log = logging.getLogger('pieplow_parser')
 
 
@@ -25,11 +25,13 @@ class Pieplow(AbstractRestaurant):
             week_menu = soup.find_all('div', class_='wpb_wrapper')
 
             menu_list = list()
-            for tag in week_menu[6].find_all('p'):
-                for child in tag.children:
-                    menu_list.append(child.string.rstrip())
 
-            log.info(type(self), menu_list)
+            print(week_menu[5])
+
+            for tag in week_menu[5].find_all('p'):
+                for child in tag.children:
+                    if child.string:
+                        menu_list.append(child.string.rstrip())
 
             menu = dict()
             menu['mon'] = self.menu_for_weekday(

@@ -41,7 +41,7 @@ def handler(event, context):
         {
             'success': 'true',
             'restaurants': restaurants.keys()
-        }
+        }, indent=4, default=str
     )
 
 

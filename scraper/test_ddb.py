@@ -1,6 +1,10 @@
-from ddb import RestaurantTable
 import json
+from restaurants.pieplow import Pieplow
 
 
-ddb = RestaurantTable()
-print(json.dumps(ddb.get_restaurant_menus(), indent=4, default=str))
+p = Pieplow()
+print(
+    json.dumps(
+        p.get_week_menu("https://lund.pieplowsmat.se/street-food/")
+    )
+)
