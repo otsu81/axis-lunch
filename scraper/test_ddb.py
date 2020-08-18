@@ -1,10 +1,10 @@
 import json
-from restaurants.pieplow import Pieplow
+from restaurants.paolos import Paolos
 
 
-p = Pieplow()
+p = Paolos()
 print(
     json.dumps(
-        p.get_week_menu("https://lund.pieplowsmat.se/street-food/")
+        p.get_week_menu("https://www.paolositalian.se/menyer/lund/")
     )
 )
