@@ -10,15 +10,6 @@ log = logging.getLogger('paolos_parser')
 
 class Paolos(AbstractRestaurant):
 
-    # def menu_for_weekday(self, menu_soup, weekday, next_weekday):
-    #     return '\n'.join(
-    #         map(str,
-    #             menu_soup[
-    #                 menu_soup.index(weekday)+1:menu_soup.index(next_weekday)-1
-    #                 ]
-    #             )
-    #         ).rstrip()
-
     def get_week_menu(self, url):
         try:
             soup = BeautifulSoup(requests.get(url).text, 'html.parser')
@@ -33,7 +24,7 @@ class Paolos(AbstractRestaurant):
                         stripped = tag.string.lstrip().rstrip()
                         if stripped != '':
                             weekday_menu.append(f"{stripped}\n")
-                menu[result] = ', '.join(weekday_menu)
+                menu[result] = ''.join(weekday_menu)
 
             return menu
 
