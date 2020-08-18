@@ -25,10 +25,6 @@ def handler(event, context):
             restaurants[info[0]] = \
                 classmap[info[0]].get_week_menu(info[1])
             restaurants[info[0]]['url'] = info[1]
-            # restaurants[info[0]] = info[1]
-            # restaurants[info[0]]['menu'] = \
-            #     classmap[info[0]].get_week_menu(info[1])
-
     ddb = RestaurantTable()
     for r in restaurants:
         ddb.update_restaurant_item(
@@ -37,12 +33,10 @@ def handler(event, context):
 
     log.info(json.dumps(restaurants, indent=4, default=str))
 
-    return json.dumps(
-        {
+    return {
             'success': 'true',
-            'restaurants': restaurants.keys()
-        }, indent=4, default=str
-    )
+            'restaurants': list(restaurants.keys())
+        }
 
 
 if __name__ == '__main__':

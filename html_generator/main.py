@@ -13,6 +13,7 @@ def get_restaurant_menus_dict(restaurants):
     ddb = boto3.resource('dynamodb')
     table = ddb.Table(os.environ.get('TABLE_NAME'))
 
+    restaurants.sort()
     menus = dict()
     for r in restaurants:
         result = table.query(
