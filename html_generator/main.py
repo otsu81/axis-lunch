@@ -10,9 +10,6 @@ log = logging.getLogger('html_generator')
 
 
 def get_restaurant_menus_dict(restaurants):
-
-    print(restaurants)
-
     ddb = boto3.resource('dynamodb')
     table = ddb.Table(os.environ.get('TABLE_NAME'))
 

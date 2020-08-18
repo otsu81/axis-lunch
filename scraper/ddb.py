@@ -21,13 +21,13 @@ class RestaurantTable():
         self.client = boto3.client('dynamodb')
         self.table_name = os.environ.get('TABLE_NAME')
 
-    def update_restaurant_menu(self, restaurant_name, menu):
+    def update_restaurant_item(self, restaurant_name, restaurant_info):
         global to_seconds
         ts = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d')
-        # ts = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
         update_expression = 'SET #MON = :mon, #TUE = :tue, #WED = :wed, ' \
-                            + '#THU = :thu, #FRI = :fri, #TTL = :ttl'
+                            + '#THU = :thu, #FRI = :fri, #TTL = :ttl, ' \
+                            + '#URL = :url'
 
         response = self.client.update_item(
             TableName=self.table_name,
@@ -37,23 +37,27 @@ class RestaurantTable():
                 '#WED': 'wed',
                 '#THU': 'thu',
                 '#FRI': 'fri',
-                '#TTL': 'ttl'
+                '#TTL': 'ttl',
+                '#URL': 'url'
             },
             ExpressionAttributeValues={
                 ':mon': {
-                    'S': menu['mon']
+                    'S': restaurant_info['mon']
                 },
                 ':tue': {
-                    'S': menu['tue']
+                    'S': restaurant_info['tue']
                 },
                 ':wed': {
-                    'S': menu['wed']
+                    'S': restaurant_info['wed']
                 },
                 ':thu': {
-                    'S': menu['thu']
+                    'S': restaurant_info['thu']
                 },
                 ':fri': {
-                    'S': menu['fri']
+                    'S': restaurant_info['fri']
+                },
+                ':url': {
+                    'S': restaurant_info['url']
                 },
                 ':ttl': {
                     'N': str(int(time.time()) + to_seconds['DAY'])
@@ -71,7 +75,7 @@ class RestaurantTable():
         )
         log.info(json.dumps(response, indent=4, default=str))
 
-    def get_restaurant_menus(self):
+    def get_restaurant_items(self):
         log.info('SCAN operation: Getting all menu items')
         return self.client.scan(
             TableName=self.table_name,

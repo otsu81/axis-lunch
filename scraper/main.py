@@ -22,14 +22,17 @@ def handler(event, context):
     with open('restaurants.csv', 'r') as f:
         for r in f.readlines():
             info = r.rstrip().split(',')
-            restaurants[info[0]] = info[1]
-            restaurants[info[0]]['menu'] = \
+            restaurants[info[0]] = \
                 classmap[info[0]].get_week_menu(info[1])
+            restaurants[info[0]]['url'] = info[1]
+            # restaurants[info[0]] = info[1]
+            # restaurants[info[0]]['menu'] = \
+            #     classmap[info[0]].get_week_menu(info[1])
 
     ddb = RestaurantTable()
     for r in restaurants:
-        ddb.update_restaurant_menu(
-            r, r['menu']
+        ddb.update_restaurant_item(
+            r, restaurants[r]
         )
 
     log.info(json.dumps(restaurants, indent=4, default=str))
