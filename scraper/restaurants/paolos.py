@@ -1,6 +1,5 @@
 import requests
 import logging
-import pprint
 import os
 from bs4 import BeautifulSoup
 from restaurants.abstract_restaurant import AbstractRestaurant
@@ -33,7 +32,7 @@ class Paolos(AbstractRestaurant):
                     if tag.string:
                         stripped = tag.string.lstrip().rstrip()
                         if stripped != '':
-                            weekday_menu.append(stripped)
+                            weekday_menu.append(f"{stripped}\n")
                 menu[result] = ', '.join(weekday_menu)
 
             return menu
