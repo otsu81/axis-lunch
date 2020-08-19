@@ -1,5 +1,5 @@
 import json
-from restaurants.paolos import Paolos
+from ..scraper.restaurants.paolos import Paolos
 
 
 p = Paolos()
