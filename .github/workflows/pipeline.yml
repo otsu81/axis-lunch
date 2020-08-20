@@ -95,12 +95,13 @@ jobs:
     - name: SAM deploy
       env:
         SAM_CLI_TELEMETRY: 0
-        S3-BUCKET: ${{ secrets.SAM_S3_BUCKET }}
+        SAM_BUCKET: ${{ secrets.SAM_S3_BUCKET }}
       run: |
         sam deploy \
           --no-fail-on-empty-changeset \
           --stack-name $STACK_NAME \
-          --s3-bucket $SAM_S3_BUCKET
+          --s3-bucket $SAM_BUCKET
+          --capabilities "CAPABILITY_NAMED_IAM"
           --parameter-overrides \
               RoleName=$ROLENAME \
               HTMLBucketName=$BUCKET \
