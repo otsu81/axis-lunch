@@ -2,9 +2,9 @@ import os
 import json
 import logging
 import csv
-from restaurants.paolos import Paolos
-from restaurants.pieplow import Pieplow
-from restaurants.edison import Edison
+from restaurants import Paolos
+from restaurants import Pieplow
+from restaurants import Edison
 from ddb import RestaurantTable
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL', 'WARNING'))
