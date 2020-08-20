@@ -248,3 +248,4 @@ __pycache__/
 .aws-sam/
 .env
 samconfig.toml
+events/*
