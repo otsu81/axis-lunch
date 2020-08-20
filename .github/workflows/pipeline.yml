@@ -100,8 +100,8 @@ jobs:
         sam deploy \
           --no-fail-on-empty-changeset \
           --stack-name $STACK_NAME \
-          --s3-bucket $SAM_BUCKET
-          --capabilities CAPABILITY_NAMED_IAM
+          --s3-bucket $SAM_BUCKET \
+          --capabilities CAPABILITY_NAMED_IAM \
           --parameter-overrides \
               RoleName=$ROLENAME \
               HTMLBucketName=$BUCKET \
