@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from csv import DictReader
+import csv
 from restaurants.paolos import Paolos
 from restaurants.pieplow import Pieplow
 from restaurants.edison import Edison
@@ -22,12 +22,11 @@ def handler(event, context):
 
     # get URLs for respective restaurants
     restaurants = dict()
-    with open('restaurants_sandbox.csv', 'r') as f:
-        reader = DictReader(f)
+    with open('restaurants.csv', 'r', newline='') as f:
+        reader = csv.reader(f)
         for row in reader:
-            restaurants[row['restaurant']]['url'] = row['url']
-            restaurants[row['restaurant']] = \
-                classmap[row['restaurant']].get_week_menu(row['url'])
+            restaurants[row[0]] = classmap[row[0]].get_week_menu(row[1])
+            restaurants[row[0]]['url'] = row[1]
 
     # update the DDB table with restaurant menus
     ddb = RestaurantTable(table_name=os.environ.get('TABLE_NAME'))
