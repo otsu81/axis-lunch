@@ -2,7 +2,7 @@ import requests
 import logging
 import os
 from bs4 import BeautifulSoup
-from restaurants.abstract_restaurant import AbstractRestaurant
+from .abstract_restaurant import AbstractRestaurant
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL', 'INFO'))
 log = logging.getLogger('paolos_parser')

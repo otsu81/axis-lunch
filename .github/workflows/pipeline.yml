@@ -101,7 +101,7 @@ jobs:
           --no-fail-on-empty-changeset \
           --stack-name $STACK_NAME \
           --s3-bucket $SAM_BUCKET
-          --capabilities "CAPABILITY_NAMED_IAM"
+          --capabilities CAPABILITY_NAMED_IAM
           --parameter-overrides \
               RoleName=$ROLENAME \
               HTMLBucketName=$BUCKET \

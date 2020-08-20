@@ -1,4 +1,4 @@
-from paolos import Paolos
+from scraper.restaurants.paolos import Paolos
 
 
 def test_non_missing_parse():
