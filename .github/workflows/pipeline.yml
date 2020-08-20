@@ -1,4 +1,4 @@
-name: AxisLunchDevBranch
+name: BuildAndDeploy
 
 on:
   push:
@@ -73,10 +73,19 @@ jobs:
         echo "::set-env name=ROLENAME::${{ secrets.ROLENAME_DEV }}"
         echo "::set-env name=CLOUDFRONT_DISTRIBUTION::false"
         echo "::set-env name=CLOUDFRONT_OAI::"
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+
+    - name: Test with pytest
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pytest tests/ -v
+
 
     - name: Configure AWS credentials
       id: creds

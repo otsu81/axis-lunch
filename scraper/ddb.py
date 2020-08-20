@@ -17,9 +17,9 @@ log = logging.getLogger('ddb_table')
 
 class RestaurantTable():
 
-    def __init__(self):
+    def __init__(self, table_name):
         self.client = boto3.client('dynamodb')
-        self.table_name = os.environ.get('TABLE_NAME')
+        self.table_name = table_name
 
     def update_restaurant_item(self, restaurant_name, restaurant_info):
         global to_seconds

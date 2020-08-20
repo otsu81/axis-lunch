@@ -1,31 +1,35 @@
 import os
 import json
 import logging
-from restaurants.paolos import Paolos
-from restaurants.pieplow import Pieplow
-from restaurants.edison import Edison
+import csv
+from restaurants import Paolos
+from restaurants import Pieplow
+from restaurants import Edison
 from ddb import RestaurantTable
 
-logging.basicConfig(level=os.environ.get('LOGLEVEL'))
+logging.basicConfig(level=os.environ.get('LOGLEVEL', 'WARNING'))
 log = logging.getLogger('scraper')
 
 
 def handler(event, context):
 
+    # define all restaurants to be parsed and generated
     classmap = {
         'Paolos': Paolos(),
         'Edison': Edison(),
         'Pieplow': Pieplow()
     }
 
+    # get URLs for respective restaurants
     restaurants = dict()
-    with open('restaurants.csv', 'r') as f:
-        for r in f.readlines():
-            info = r.rstrip().split(',')
-            restaurants[info[0]] = \
-                classmap[info[0]].get_week_menu(info[1])
-            restaurants[info[0]]['url'] = info[1]
-    ddb = RestaurantTable()
+    with open('restaurants.csv', 'r', newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            restaurants[row[0]] = classmap[row[0]].get_week_menu(row[1])
+            restaurants[row[0]]['url'] = row[1]
+
+    # update the DDB table with restaurant menus
+    ddb = RestaurantTable(table_name=os.environ.get('TABLE_NAME'))
     for r in restaurants:
         ddb.update_restaurant_item(
             r, restaurants[r]
@@ -33,6 +37,7 @@ def handler(event, context):
 
     log.info(json.dumps(restaurants, indent=4, default=str))
 
+    # return list of attempted restaurants
     return {
             'success': 'true',
             'restaurants': list(restaurants.keys())
