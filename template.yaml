@@ -194,6 +194,23 @@ Resources:
           TABLE_NAME: !Ref DDBTableName
           LOGLEVEL: INFO
 
+  BucketCleanup:
+    Type: AWS::Serverless::Function # Helper function to empty S3 bucket on CFN stack delete
+    Properties:
+      CodeUri: bucket_cleanup/
+      Handler: main.handler
+      Runtime: python3.8
+      Role: !GetAtt AxisLunchServerlessRole.Arn
+      Environment:
+        Variables:
+          LOGLEVEL: INFO
+
+  BucketCleanupOnDelete:
+    Type: Custom::BucketCleanup
+    Properties:
+      ServiceToken: !GetAtt BucketCleanup.Arn
+      BucketName: !Ref HTMLS3Bucket
+
   Statemachine:
     Type: AWS::Serverless::StateMachine
     Properties:
