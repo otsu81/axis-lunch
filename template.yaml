@@ -205,6 +205,8 @@ Resources:
       Handler: main.handler
       Runtime: python3.8
       Role: !GetAtt AxisLunchServerlessRole.Arn
+      Layers:
+        - !Ref LayerDependencies
       Environment:
         Variables:
           LOGLEVEL: INFO
