@@ -37,7 +37,8 @@ tr.days, td.restaurant_name{
 td.active {
     color: #000;
 }
-h1 {
+
+h3 {
     width: 100%;
     border-bottom: 1px solid black;
     text-transform: uppercase;
