@@ -21,7 +21,9 @@ class Pieplow(AbstractRestaurant):
 
     def get_week_menu(self, url):
         try:
-            soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+            soup = BeautifulSoup(
+                requests.get(url, verify=False).text, 'html.parser'
+            )
             week_menu = soup.find_all('div', class_='wpb_wrapper')
 
             menu_list = list()
