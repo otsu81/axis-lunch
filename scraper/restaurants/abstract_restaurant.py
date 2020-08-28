@@ -20,7 +20,7 @@ class AbstractRestaurant(ABC):
         pass
 
     def make_empty_menu(self, exception):
-        self.log.warn(f"Error parsing, {exception}")
+        self.log.warning(f"Error parsing, {exception}")
         return {
             'mon': 'missing parse',
             'tue': 'missing parse',

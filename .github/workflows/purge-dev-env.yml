@@ -1,0 +1,24 @@
+name: PurgeDevEnv
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  delete-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure AWS credentials
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.SANDBOX_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.DEFAULT_REGION }}
+
+    - name: purge dev environment
+      run: |
+        aws cloudformation describe-stacks \
+          --query 'Stacks[?StackName==`'${{ secrets.STACK_NAME_DEV }}'`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' \
+          --output text
