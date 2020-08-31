@@ -1,7 +1,6 @@
 import requests
 import logging
 import os
-import re
 from bs4 import BeautifulSoup
 from .abstract_restaurant import AbstractRestaurant
 
