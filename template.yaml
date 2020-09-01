@@ -125,6 +125,7 @@ Resources:
               - wed
               - thu
               - fri
+              - url
 
   HTMLS3Bucket:
     Type: AWS::S3::Bucket
