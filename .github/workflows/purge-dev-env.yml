@@ -19,6 +19,5 @@ jobs:
 
     - name: purge dev environment
       run: |
-        aws cloudformation describe-stacks \
-          --query 'Stacks[?StackName==`'${{ secrets.STACK_NAME_DEV }}'`].[Outputs[?OutputKey==`StatemachineArn`].OutputValue]' \
-          --output text
+        STACK=$(aws cloudformation describe-stacks --query 'Stacks[?StackName==`'${{ secrets.STACK_NAME_DEV }}'`].[StackId]' --output text)
+        RESULT=$(if [ -z "$STACK" ]; then echo "No DEV stack present"; else echo $STACK && aws cloudformation delete-stack --stack-name $STACK_NAME; fi)
