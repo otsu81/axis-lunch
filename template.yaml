@@ -111,7 +111,7 @@ Resources:
         AttributeName: ttl
         Enabled: !Ref DDBTTLEnabled
       GlobalSecondaryIndexes:
-        - IndexName: sortByDate2
+        - IndexName: sortByDate
           KeySchema:
           - AttributeName: "restaurant"
             KeyType: HASH
