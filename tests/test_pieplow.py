@@ -10,7 +10,7 @@ def fetch_url():
         reader = csv.reader(f)
         for row in reader:
             restaurants[row[0]] = {'url': row[1]}
-    return restaurants['Pieplow']['url']
+    return restaurants['Pieplow Grenden']['url']
 
 
 def test_non_missing_parse(fetch_url):
