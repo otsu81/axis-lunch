@@ -249,3 +249,4 @@ __pycache__/
 .env
 samconfig.toml
 events/*
+html/index.html
