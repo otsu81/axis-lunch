@@ -17,7 +17,7 @@ def get_restaurant_menus_dict(restaurants):
     menus = dict()
     for r in restaurants:
         result = table.query(
-            IndexName='sortByDate',
+            IndexName='sortByDate2',
             ConsistentRead=False,
             ScanIndexForward=False,
             Limit=1,
