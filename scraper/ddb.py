@@ -60,7 +60,7 @@ class RestaurantTable():
                     'S': restaurant_info['url']
                 },
                 ':ttl': {
-                    'N': str(int(time.time()) + to_seconds['DAY'])
+                    'N': str(int(time.time()) + to_seconds['WEEK'])
                 }
             },
             Key={
