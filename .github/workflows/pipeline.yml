@@ -72,7 +72,7 @@ jobs:
         echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE_DEV }}"
         echo "::set-env name=ROLENAME::${{ secrets.ROLENAME_DEV }}"
         echo "::set-env name=CLOUDFRONT_DISTRIBUTION::false"
-        echo "::set-env name=CLOUDFRONT_OAI::"
+        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
