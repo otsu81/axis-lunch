@@ -114,7 +114,7 @@ jobs:
           --parameter-overrides \
               RoleName=$ROLENAME \
               HTMLBucketName=$BUCKET \
-              CloudfrontDistribution=$CLOUDFRONT_DISTRIBUTION \
+              CloudfrontDistribution=$CLOUDFRONT_OAI \
               DDBTableName=$DDB_TABLE
 
     - name: Copy HTML files
