@@ -1,7 +1,4 @@
 # Lunch@Axis scraper
-
-![BuildAndDeploy](https://github.com/otsu81/axis-lunch/workflows/BuildAndDeploy/badge.svg?branch=dev) ![PurgeDevEnv](https://github.com/otsu81/axis-lunch/workflows/PurgeDevEnv/badge.svg)
-
 This is a [Rube Goldberg machine](https://en.wikipedia.org/wiki/Rube_Goldberg_machine) intended to give you an idea about what's for lunch around the Axis HQ in Lund, Sweden.
 
 See if it works! [Lunch@Axis](https://lunch.axis.cloud/)
@@ -39,6 +36,7 @@ yields...
 * `BUCKET`: The name of the master branch S3 bucket. Must be a non-existing and unique name
 * `BUCKET_DEV`: The name of the dev branch S3 bucket. Must be a non-existing and unique name
 * `CLOUDFRONT_OAI`: The Cloudfront Access Origin ID
+* `CLOUDFRONT_ID`: The Cloudfront Distribution ID
 * `DDB_TABLE`: The name of the DynamoDB table used by Lambda functions in the master branch
 * `DDB_TABLE_DEV`: The name of the DynamoDB table used by Lambda functions in the dev branch
 * `DEFAULT_REGION`: The AWS region you want to deploy in
