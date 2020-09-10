@@ -142,5 +142,5 @@ jobs:
       run: |
         cat files_inventory.json | jq --arg NBR_FILES $NBR_FILES '. | {"Paths": { "Quantity": $NBR_FILES|tonumber, "Items": (["/" + .[].Key])}, "CallerReference": "GithubActionsInvalidation"}' > invalidations.json
         aws cloudfront create-invalidation \
-          --distribution-id ${{ secrets.CLOUDFRONT_ID }} \
+          --distribution-id ${{ secrets.CLOUDFRONT_OAI }} \
           --invalidation-batch file://invalidations.json

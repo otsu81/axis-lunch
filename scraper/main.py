@@ -17,7 +17,7 @@ def handler(event, context):
     classmap = {
         'Paolos': Paolos(),
         'Edison': Edison(),
-        'Pieplow Grenden': Pieplow(),
+        'Pieplow Grenden': Pieplow()
     }
 
     # get URLs for respective restaurants
