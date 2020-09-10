@@ -1,4 +1,7 @@
 # Lunch@Axis scraper
+
+![BuildAndDeploy](https://github.com/otsu81/axis-lunch/workflows/BuildAndDeploy/badge.svg?branch=dev) ![PurgeDevEnv](https://github.com/otsu81/axis-lunch/workflows/PurgeDevEnv/badge.svg)
+
 This is a [Rube Goldberg machine](https://en.wikipedia.org/wiki/Rube_Goldberg_machine) intended to give you an idea about what's for lunch around the Axis HQ in Lund, Sweden.
 
 See if it works! [Lunch@Axis](https://lunch.axis.cloud/)
