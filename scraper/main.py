@@ -21,7 +21,7 @@ def handler(event, context):
         'Edison': Edison(),
         'Pieplow Grenden': Pieplow(),
         'Bricks': Bricks(),
-        'Scotland yard': ScotlandYard
+        'Scotland Yard': ScotlandYard()
     }
 
     # get URLs for respective restaurants
