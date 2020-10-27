@@ -6,6 +6,7 @@ from restaurants import Paolos
 from restaurants import Pieplow
 from restaurants import Edison
 from restaurants import Bricks
+from restaurants import ScotlandYard
 from ddb import RestaurantTable
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL', 'WARNING'))
@@ -19,7 +20,8 @@ def handler(event, context):
         'Paolos': Paolos(),
         'Edison': Edison(),
         'Pieplow Grenden': Pieplow(),
-        'Bricks': Bricks()
+        'Bricks': Bricks(),
+        'Scotland yard': ScotlandYard
     }
 
     # get URLs for respective restaurants
