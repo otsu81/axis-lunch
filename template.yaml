@@ -234,7 +234,7 @@ Resources:
           Properties:
             Description: Defines the interval for how often the statemachine should run
             Enabled: True
-            Schedule: "cron(0/20 9-12 ? * mon-fri *)"
+            Schedule: "cron(0/20 7-12 ? * mon-fri *)"
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref ScraperFunction
