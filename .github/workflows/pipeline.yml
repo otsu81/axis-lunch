@@ -42,6 +42,7 @@ jobs:
   sam:
     runs-on: ubuntu-latest
 
+
     steps:
 
     - name: if dev branch set dev env variables
@@ -53,6 +54,8 @@ jobs:
         ROLENAME: ${{ secrets.ROLENAME_DEV }}
         CLOUDFRONT_DISTRIBUTION: false
         CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
+      run: |
+        echo setting DEV env variables
 
     - name: if master branch set prod env variables
       if: github.base_ref == 'master'
@@ -63,6 +66,8 @@ jobs:
         ROLENAME: ${{ secrets.ROLENAME }}
         CLOUDFRONT_DISTRIBUTION: true
         CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
+      run: |
+        echo setting PROD env variables
 
     - name: checkout master
       uses: actions/checkout@v2
