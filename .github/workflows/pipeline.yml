@@ -46,7 +46,7 @@ jobs:
     steps:
 
     - name: if dev branch set dev env variables
-      if: "contains(github.event.head_commit.message, 'CONDITION 1 MSG')"
+      if: github.ref == 'refs/heads/dev'
       env:
         BUCKET: ${{ secrets.BUCKET_DEV }}
         STACK_NAME: ${{ secrets.STACK_NAME_DEV }}
