@@ -42,6 +42,14 @@ jobs:
   sam:
     runs-on: ubuntu-latest
 
+    if: github.ref == 'refs/heads/dev'
+      BUCKET:${{ secrets.BUCKET_DEV }}
+      STACK_NAME:${{ secrets.STACK_NAME_DEV }}
+      DDB_TABLE:${{ secrets.DDB_TABLE_DEV }}
+      ROLENAME:${{ secrets.ROLENAME_DEV }}
+      CLOUDFRONT_DISTRIBUTION:false
+      CLOUDFRONT_OAI:${{ secrets.CLOUDFRONT_OAI }}
+
     steps:
 
     - name: checkout master
@@ -64,14 +72,14 @@ jobs:
         echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
         echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
 
-    - name: set DEV env if push to dev branch
-      if: github.ref == 'refs/heads/dev'
-        BUCKET:${{ secrets.BUCKET_DEV }}
-        STACK_NAME:${{ secrets.STACK_NAME_DEV }}
-        DDB_TABLE:${{ secrets.DDB_TABLE_DEV }}
-        ROLENAME:${{ secrets.ROLENAME_DEV }}
-        CLOUDFRONT_DISTRIBUTION:false
-        CLOUDFRONT_OAI:${{ secrets.CLOUDFRONT_OAI }}
+    # - name: set DEV env if push to dev branch
+    #   if: github.ref == 'refs/heads/dev'
+    #     BUCKET:${{ secrets.BUCKET_DEV }}
+    #     STACK_NAME:${{ secrets.STACK_NAME_DEV }}
+    #     DDB_TABLE:${{ secrets.DDB_TABLE_DEV }}
+    #     ROLENAME:${{ secrets.ROLENAME_DEV }}
+    #     CLOUDFRONT_DISTRIBUTION:false
+    #     CLOUDFRONT_OAI:${{ secrets.CLOUDFRONT_OAI }}
 
 # run: |
 #   echo "::set-env name=BUCKET::${{ secrets.BUCKET_DEV }}"
