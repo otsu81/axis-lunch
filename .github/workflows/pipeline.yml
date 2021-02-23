@@ -42,16 +42,27 @@ jobs:
   sam:
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/dev'
-    env:
-      BUCKET: ${{ secrets.BUCKET_DEV }}
-      STACK_NAME: ${{ secrets.STACK_NAME_DEV }}
-      DDB_TABLE: ${{ secrets.DDB_TABLE_DEV }}
-      ROLENAME: ${{ secrets.ROLENAME_DEV }}
-      CLOUDFRONT_DISTRIBUTION: false
-      CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
-
     steps:
+
+    - name: if dev branch set dev env variables
+      if: "contains(github.event.head_commit.message, 'CONDITION 1 MSG')"
+      env:
+        BUCKET: ${{ secrets.BUCKET_DEV }}
+        STACK_NAME: ${{ secrets.STACK_NAME_DEV }}
+        DDB_TABLE: ${{ secrets.DDB_TABLE_DEV }}
+        ROLENAME: ${{ secrets.ROLENAME_DEV }}
+        CLOUDFRONT_DISTRIBUTION: false
+        CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
+
+    - name: if master branch set prod env variables
+      if: github.base_ref == 'master'
+      env:
+        BUCKET: ${{ secrets.BUCKET }}
+        STACK_NAME: ${{ secrets.STACK_NAME }}
+        DDB_TABLE: ${{ secrets.DDB_TABLE }}
+        ROLENAME: ${{ secrets.ROLENAME }}
+        CLOUDFRONT_DISTRIBUTION: true
+        CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
 
     - name: checkout master
       uses: actions/checkout@v2
@@ -63,15 +74,15 @@ jobs:
       if: github.base_ref != 'master'
       uses: actions/checkout@v2
 
-    - name: set PROD variables if master merge
-      if: github.base_ref == 'master'
-      run: |
-        echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
-        echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
-        echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
-        echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
-        echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
-        echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
+    # - name: set PROD variables if master merge
+    #   if: github.base_ref == 'master'
+    #   run: |
+    #     echo "::set-env name=BUCKET::${{ secrets.BUCKET }}"
+    #     echo "::set-env name=STACK_NAME::${{ secrets.STACK_NAME }}"
+    #     echo "::set-env name=DDB_TABLE::${{ secrets.DDB_TABLE }}"
+    #     echo "::set-env name=ROLENAME::${{ secrets.ROLENAME }}"
+    #     echo "::set-env name=CLOUDFRONT_DISTRIBUTION::true"
+    #     echo "::set-env name=CLOUDFRONT_OAI::${{ secrets.CLOUDFRONT_OAI }}"
 
     # - name: set DEV env if push to dev branch
     #   if: github.ref == 'refs/heads/dev'
