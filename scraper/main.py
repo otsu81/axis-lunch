@@ -2,11 +2,11 @@ import os
 import json
 import logging
 import csv
-from restaurants import Paolos
+# from restaurants import Paolos
 from restaurants import Pieplow
 from restaurants import Edison
 from restaurants import Bricks
-from restaurants import ScotlandYard
+# from restaurants import ScotlandYard
 from ddb import RestaurantTable
 
 logging.basicConfig(level=os.environ.get('LOGLEVEL', 'WARNING'))
@@ -17,11 +17,11 @@ def handler(event, context):
 
     # define all restaurants to be parsed and generated
     classmap = {
-        'Paolos': Paolos(),
+        # 'Paolos': Paolos(),
         'Edison': Edison(),
         'Pieplow Grenden': Pieplow(),
+        # 'Scotland Yard': ScotlandYard()
         'Bricks': Bricks(),
-        'Scotland Yard': ScotlandYard()
     }
 
     # get URLs for respective restaurants
