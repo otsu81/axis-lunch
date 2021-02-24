@@ -75,7 +75,7 @@ jobs:
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
     - name: if master set PROD env variables
-      if: github.base_ref == 'master'
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "BUCKET=${{ secrets.BUCKET }}" >> $GITHUB_ENV
         echo "STACK_NAME=${{ secrets.STACK_NAME }}" >> $GITHUB_ENV
@@ -85,7 +85,7 @@ jobs:
         echo "CLOUDFRONT_OAI=${{ secrets.CLOUDFRONT_OAI }}" >> $GITHUB_ENV
 
     - name: if dev set DEV env variables
-      if: github.base_ref == 'dev'
+      if: github.ref == 'refs/heads/dev'
       run: |
         echo "BUCKET=${{ secrets.BUCKET_DEV }}" >> $GITHUB_ENV
         echo "STACK_NAME=${{ secrets.STACK_NAME_DEV }}" >> $GITHUB_ENV
