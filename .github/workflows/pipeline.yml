@@ -50,7 +50,7 @@ jobs:
 
   sam:
 
-# GitHub Actions doesn't support if-else, set env on workflow level and replace if dev on job-level
+  # GitHub Actions doesn't support if-else, set env on workflow level and replace if dev on job-level
     if: github.ref == 'refs/heads/dev'
     env:
       BUCKET: ${{ secrets.BUCKET_DEV }}
