@@ -66,6 +66,10 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python -m pytest tests/ -v
 
+    - name: verify branch
+      run: |
+        echo ${{ github.ref }}
+
     - name: Configure AWS credentials
       id: creds
       uses: aws-actions/configure-aws-credentials@v1
@@ -74,7 +78,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
-    - name: if master set PROD env variables
+    - name: PROD env variables conditional
       if: github.ref == 'refs/heads/master'
       run: |
         echo "BUCKET=${{ secrets.BUCKET }}" >> $GITHUB_ENV
@@ -84,7 +88,7 @@ jobs:
         echo "CLOUDFRONT_DISTRIBUTION=true" >> $GITHUB_ENV
         echo "CLOUDFRONT_OAI=${{ secrets.CLOUDFRONT_OAI }}" >> $GITHUB_ENV
 
-    - name: if dev set DEV env variables
+    - name: DEV env variables conditional
       if: github.ref == 'refs/heads/dev'
       run: |
         echo "BUCKET=${{ secrets.BUCKET_DEV }}" >> $GITHUB_ENV
