@@ -79,7 +79,7 @@ jobs:
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
     - name: PROD env variables conditional
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'master'
       run: |
         echo "BUCKET=${{ secrets.BUCKET }}" >> $GITHUB_ENV
         echo "STACK_NAME=${{ secrets.STACK_NAME }}" >> $GITHUB_ENV
