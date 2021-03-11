@@ -1,7 +1,7 @@
 # Lunch@Axis scraper
 This is a [Rube Goldberg machine](https://en.wikipedia.org/wiki/Rube_Goldberg_machine) intended to give you an idea about what's for lunch around the Axis HQ in Lund, Sweden.
 
-See if it works! [Lunch@Axis](https://lunch.axis.cloud/)
+This used to be hosted under lunch.axis.cloud, but since I'm no longer with the company the scraper is currently not hosted anywhere and the Github Actions disabled.
 
 ## Adding restaurants
 If you think there's a restaurant missing, or you want to adopt this to your own liking, it's easy to expand on using the [Abstract Base Class](https://docs.python.org/3/library/abc.html) `AbstractRestaurant.py` and adding a new restaurant to `restaurants.csv`.
