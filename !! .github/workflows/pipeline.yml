@@ -7,15 +7,6 @@ on:
     types: [ closed ]
     branches: [ master ]
 
-# GitHub Actions doesn't support if-else, set env on workflow level and replace if dev on job-level
-env:
-  BUCKET: ${{ secrets.BUCKET }}
-  STACK_NAME: ${{ secrets.STACK_NAME }}
-  DDB_TABLE: ${{ secrets.DDB_TABLE }}
-  ROLENAME: ${{ secrets.ROLENAME }}
-  CLOUDFRONT_DISTRIBUTION: true
-  CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
-
 jobs:
 
   lint:
@@ -50,16 +41,6 @@ jobs:
 
   sam:
 
-  # GitHub Actions doesn't support if-else, set env on workflow level and replace if dev on job-level
-    if: github.ref == 'refs/heads/dev'
-    env:
-      BUCKET: ${{ secrets.BUCKET_DEV }}
-      STACK_NAME: ${{ secrets.STACK_NAME_DEV }}
-      DDB_TABLE: ${{ secrets.DDB_TABLE_DEV }}
-      ROLENAME: ${{ secrets.ROLENAME_DEV }}
-      CLOUDFRONT_DISTRIBUTION: false
-      CLOUDFRONT_OAI: ${{ secrets.CLOUDFRONT_OAI }}
-
     runs-on: ubuntu-latest
 
     steps:
@@ -93,6 +74,26 @@ jobs:
         aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.DEFAULT_REGION }}
 
+    - name: if master set PROD env variables
+      if: github.ref == 'refs/heads/master'
+      run: |
+        echo "BUCKET=${{ secrets.BUCKET }}" >> $GITHUB_ENV
+        echo "STACK_NAME=${{ secrets.STACK_NAME }}" >> $GITHUB_ENV
+        echo "DDB_TABLE=${{ secrets.DDB_TABLE }}" >> $GITHUB_ENV
+        echo "ROLENAME=${{ secrets.ROLENAME }}" >> $GITHUB_ENV
+        echo "CLOUDFRONT_DISTRIBUTION=true" >> $GITHUB_ENV
+        echo "CLOUDFRONT_OAI=${{ secrets.CLOUDFRONT_OAI }}" >> $GITHUB_ENV
+
+    - name: if dev set DEV env variables
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        echo "BUCKET=${{ secrets.BUCKET_DEV }}" >> $GITHUB_ENV
+        echo "STACK_NAME=${{ secrets.STACK_NAME_DEV }}" >> $GITHUB_ENV
+        echo "DDB_TABLE=${{ secrets.DDB_TABLE_DEV }}" >> $GITHUB_ENV
+        echo "ROLENAME=${{ secrets.ROLENAME_DEV }}" >> $GITHUB_ENV
+        echo "CLOUDFRONT_DISTRIBUTION=false" >> $GITHUB_ENV
+        echo "CLOUDFRONT_OAI=${{ secrets.CLOUDFRONT_OAI }}" >> $GITHUB_ENV
+
     - name: SAM build
       env:
         SAM_CLI_TELEMETRY: 0
@@ -106,19 +107,19 @@ jobs:
       run: |
         sam deploy \
           --no-fail-on-empty-changeset \
-          --stack-name $STACK_NAME \
-          --s3-bucket $SAM_BUCKET \
+          --stack-name ${{ env.STACK_NAME }} \
+          --s3-bucket ${{ env.SAM_BUCKET }} \
           --capabilities CAPABILITY_NAMED_IAM \
           --parameter-overrides \
-              RoleName=$ROLENAME \
-              HTMLBucketName=$BUCKET \
-              CloudfrontDistribution=$CLOUDFRONT_DISTRIBUTION \
-              CloudfrontOriginAccessId=$CLOUDFRONT_OAI \
-              DDBTableName=$DDB_TABLE
+              RoleName=${{ env.ROLENAME }} \
+              HTMLBucketName=${{ env.BUCKET }} \
+              CloudfrontDistribution=${{ env.CLOUDFRONT_DISTRIBUTION }} \
+              CloudfrontOriginAccessId=${{ env.CLOUDFRONT_OAI }} \
+              DDBTableName=${{ env.DDB_TABLE }}
 
     - name: Copy HTML files
       run: |
-        aws s3 sync html/ s3://$BUCKET
+        aws s3 sync html/ s3://${{ env.BUCKET }}
 
     - name: Run and check stepfunction
       run: |
@@ -132,8 +133,7 @@ jobs:
         aws s3api list-objects-v2 \
           --bucket ${{ secrets.BUCKET }} \
           --query 'Contents[?LastModified > `'$MINUTES_AGO'`]' > files_inventory.json
-        NBR_FILES=$(jq '. | length' files_inventory.json)
-        echo "::set-env name=NBR_FILES::$NBR_FILES"
+        echo "NBR_FILES=$(jq '. | length' files_inventory.json)" >> $GITHUB_ENV
 
     - name: If new files, invalidate them in Cloudfront
       if: env.CLOUDFRONT_DISTRIBUTION == 'true' && env.NBR_FILES != 0
